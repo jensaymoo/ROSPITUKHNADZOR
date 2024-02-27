@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using FluentValidation;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using rospitukhnadzor;
 using System.Text.Json;
@@ -12,14 +13,18 @@ namespace RosPitukhNadzor
 {
     internal class TelegramBot : TelegramBotClient, ITelegramBotInstance
     {
-        private IConfigurationProvider configurationProvider;
-        private Configuration config { get => configurationProvider.GetConfiguration(); }
+        public ConfigurationBot config;
+
         private IWarningsStorage warningsStorage;
         private UpdateType[] allowedUpdates = new[] { UpdateType.Message, UpdateType.EditedMessage };
 
-        public TelegramBot(IConfigurationProvider configProvadier, IWarningsStorage warnings) : base(configProvadier.GetConfiguration()!.TelegramBotToken!)
+        public TelegramBot(IConfigurationProvider configProvider, IWarningsStorage warnings) : base(configProvider.GetConfiguration<ConfigurationBot>()!.TelegramBotToken!)
         {
-            configurationProvider = configProvadier;
+            config = configProvider.GetConfiguration<ConfigurationBot>();
+
+            var validator = new ConfigurationBotValidator();
+            validator.ValidateAndThrow(config);
+
             warningsStorage = warnings;
         }
 
@@ -37,7 +42,7 @@ namespace RosPitukhNadzor
             PeriodicTimer timer = new(TimeSpan.FromMinutes(1));
             while (await timer.WaitForNextTickAsync())
             {
-                warningsStorage.ClearMuteExpiredUsers();
+                warningsStorage.ClearExpiredWarnings();
             }
         }
 
@@ -117,7 +122,6 @@ namespace RosPitukhNadzor
                                     else
                                     {
                                         warningsStorage.AddWarning(new Warning(current_message.Chat.Id, current_user.Id, problem_user.Id, DateTime.Now + TimeSpan.FromMinutes(config.WarningExpirationTimeSpan!.Value)));
-                                        //WarningWarnings.Add(new Warning(current_message.Chat.Id, current_user.Id, problem_user.Id, DateTime.Now + TimeSpan.FromMinutes(_config.WarningExpirationTimeSpan!.Value)));
                                     }
 
                                     //чекаем коллво выданных предупредений
@@ -255,7 +259,6 @@ namespace RosPitukhNadzor
         {
             if (DateTime.Now.DayOfWeek == DayOfWeek.Friday || DateTime.Now.DayOfWeek == DayOfWeek.Saturday)
             {
-                var chat_id_hash_string = chat.GetHashCode().ToBytesString();
                 var input_string = string.Concat(inputMessage.Where(c => char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c)).ToArray());
                 var found_beer_words = config.BeerTokens!.Where(x => input_string.Contains(x));
 
@@ -324,7 +327,7 @@ namespace RosPitukhNadzor
                 config.BanTokenWords!.Add(chat_hash_string, baned_words.ToArray());
             }
 
-            configurationProvider.SaveConfiguration();
+            //configurationProvider.SaveConfiguration();
 
             return baned_words;
         }

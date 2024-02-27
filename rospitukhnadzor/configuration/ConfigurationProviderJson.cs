@@ -1,23 +1,16 @@
-﻿using FluentValidation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
+﻿using Newtonsoft.Json;
 
 namespace RosPitukhNadzor
 {
     internal class ConfigurationProviderJson: IConfigurationProvider
     {
-        private static Configuration instance;
-
+        private string config; 
         public ConfigurationProviderJson() 
         {
             try
             {
                 var asm_path = Directory.GetCurrentDirectory();
-                instance = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(Path.Combine(asm_path, "config.json")))!;
-
-                var validator = new ConfigurationValidator();
-                validator.ValidateAndThrow(instance);
+                config = File.ReadAllText(Path.Combine(asm_path, "config.json"));
             }
             catch
             {
@@ -25,17 +18,9 @@ namespace RosPitukhNadzor
             }     
         }
 
-        public Configuration GetConfiguration()
+        public T GetConfiguration<T>()
         {
-            return instance;
-        }
-
-        public bool SaveConfiguration()
-        {
-            var asm_path = Directory.GetCurrentDirectory();
-            File.WriteAllText(Path.Combine(asm_path, "config.json"), JsonConvert.SerializeObject(instance, Formatting.Indented));
-            return true;
+            return JsonConvert.DeserializeObject<T>(config)!;
         }
     }
-
 }

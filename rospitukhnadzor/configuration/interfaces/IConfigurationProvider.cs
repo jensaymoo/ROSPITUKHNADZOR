@@ -8,7 +8,6 @@ namespace RosPitukhNadzor
 {
     internal interface IConfigurationProvider
     {
-        public Configuration GetConfiguration();
-        public bool SaveConfiguration();
+        public T GetConfiguration<T>();
     }
 }

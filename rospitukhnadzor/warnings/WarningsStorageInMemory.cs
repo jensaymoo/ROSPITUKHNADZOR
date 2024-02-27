@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace RosPitukhNadzor
 {
     internal class WarningsStorageInMemory : IWarningsStorage
     {
         private List<Warning> _warnings = new();
+
+        public WarningsStorageInMemory (IConfigurationProvider configurationProvider)
+        {
+
+        }
+
         public void AddWarning(Warning warning)
         {
             _warnings.Add(warning);
@@ -18,9 +20,9 @@ namespace RosPitukhNadzor
             return _warnings.RemoveAll(warning);
         }
 
-        public int ClearMuteExpiredUsers()
+        public int ClearExpiredWarnings()
         {
-            return _warnings.RemoveAll(warn => warn.MuteExpiries < DateTime.Now);
+            return RemoveWarning(warn => warn.MuteExpiries < DateTime.Now);
         }
 
         public IEnumerable<Warning> GetWarnings()

@@ -10,7 +10,7 @@ namespace RosPitukhNadzor
     {
         void AddWarning(Warning warning);
         int RemoveWarning(Predicate<Warning> warning);
-        int ClearMuteExpiredUsers();
+        int ClearExpiredWarnings();
         IEnumerable<Warning> GetWarnings();
     }
 }

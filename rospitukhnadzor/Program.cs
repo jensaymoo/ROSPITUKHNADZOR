@@ -23,7 +23,7 @@ namespace RosPitukhNadzor
                 .As<IConfigurationProvider>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<WarningsStorageInMemory>()
+            builder.RegisterType<WarningsStorageDatabase>()
                 .As<IWarningsStorage>()
                 .InstancePerLifetimeScope();
 
