@@ -92,6 +92,7 @@ namespace RosPitukhNadzor.Commands
                     }
                     catch (Exception ex)
                     {
+#warning опасное место, почини его как прикрутишь логи
                         continue;
                     }
                 }
