@@ -12,8 +12,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\CopyMe.SQLite.tt.txt" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\DataAnnotations.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\DataModel.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\EditableObject.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\Equatable.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\Humanizer.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.SQLite.Tools.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.SQLite.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.Tools.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\LinqToDB.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\MultipleFiles.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\NotifyDataErrorInfo.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\NotifyPropertyChanged.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\ObsoleteAttributes.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\PluralizationService.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\T4Model.ttinclude" />
+    <None Remove="C:\Users\pigonthewind\.nuget\packages\linq2db.sqlite\5.4.0\contentFiles\any\any\LinqToDB.Templates\Validation.ttinclude" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.ExpressionMapping" Version="7.0.0" />
     <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="linq2db" Version="5.4.0" />
+    <PackageReference Include="linq2db.SQLite" Version="5.4.0" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
   </ItemGroup>

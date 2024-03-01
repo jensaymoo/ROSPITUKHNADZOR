@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
+using LinqToDB;
 
 namespace RosPitukhNadzor
 {
     internal class ConfigurationDatabase
     {
-        public string? DatabaseProvider {  get; set; } = "test";
-        public string? DatabaseConfig { get; set; } = "test";
+        public string? DatabaseProvider {  get; set; }
+        public string? DatabaseConfig { get; set; }
     }
 
     internal class ConfigurationDatabaseValidator : AbstractValidator<ConfigurationDatabase>
@@ -16,11 +17,9 @@ namespace RosPitukhNadzor
                 .NotNull()
                 .NotEmpty();
 
-
             RuleFor(opt => opt.DatabaseConfig)
                 .NotNull()
                 .NotEmpty();
-
         }
     }
 }

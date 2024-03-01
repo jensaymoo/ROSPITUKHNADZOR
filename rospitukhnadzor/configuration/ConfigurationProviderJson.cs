@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FluentValidation;
+using Newtonsoft.Json;
 
 namespace RosPitukhNadzor
 {
@@ -18,9 +19,14 @@ namespace RosPitukhNadzor
             }     
         }
 
-        public T GetConfiguration<T>()
+        public T GetConfiguration<T>(AbstractValidator<T>? validator = null)
         {
-            return JsonConvert.DeserializeObject<T>(config)!;
+            var value = JsonConvert.DeserializeObject<T>(config)!;
+
+            if(validator is not null)
+                validator.ValidateAndThrow(value);
+
+            return value;
         }
     }
 }

@@ -1,15 +1,7 @@
 ﻿using Autofac;
-using Newtonsoft.Json.Linq;
-using RestSharp;
-using rospitukhnadzor;
-using System.Text.Json;
-using System.Threading;
-using Telegram.Bot;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using File = System.IO.File;
+using RosPitukhNadzor.Commands;
+using System.Reflection;
+using System.Windows.Input;
 
 namespace RosPitukhNadzor
 {
@@ -18,17 +10,21 @@ namespace RosPitukhNadzor
         public static async Task Main()
         {
             var builder = new ContainerBuilder();
-
             builder.RegisterType<ConfigurationProviderJson>()
                 .As<IConfigurationProvider>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<WarningsStorageDatabase>()
-                .As<IWarningsStorage>()
+            builder.RegisterType<DatabaseStorageProvider>()
+                .As<IStorageProvider>()
                 .InstancePerLifetimeScope();
 
             builder.RegisterType<TelegramBot>()
                 .As<ITelegramBotInstance>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .Where(t => t.GetCustomAttribute<CommandHandlerAttribute>() != null)
+                .As<ICommandHandler>()
                 .InstancePerLifetimeScope();
 
 

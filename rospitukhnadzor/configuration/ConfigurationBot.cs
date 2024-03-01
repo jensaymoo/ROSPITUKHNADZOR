@@ -12,7 +12,7 @@ namespace RosPitukhNadzor
 
         public int? WarningExpirationTimeSpan { get; set; } = 5;
 
-        public Dictionary<string, string[]>? BanTokenWords { get; set; } = new();
+        //public Dictionary<string, string[]>? BanTokenWords { get; set; } = new();
 
         public string[]? BeerTokens { get; set; } = { "пива", "пиву", "пиво", "пивом", "пиве",
                                                       "пивка", "пивку", "пивко", "пивком", "пивке",
