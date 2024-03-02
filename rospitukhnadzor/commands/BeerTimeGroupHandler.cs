@@ -5,13 +5,13 @@ using Telegram.Bot.Types.Enums;
 namespace RosPitukhNadzor.Commands
 {
     [MessageHandler(null, [ChatType.Group])]
-    class BeerGroupHandler : IMessageHandler
+    class BeerTimeGroupHandler : IMessageHandler
     {
         IStorageProvider storageProvider;
         IConfigurationProvider configProvider;
 
         ConfigurationBot config;
-        public BeerGroupHandler(IConfigurationProvider configuration, IStorageProvider storage)
+        public BeerTimeGroupHandler(IConfigurationProvider configuration, IStorageProvider storage)
         {
             storageProvider = storage;
             configProvider = configuration;
