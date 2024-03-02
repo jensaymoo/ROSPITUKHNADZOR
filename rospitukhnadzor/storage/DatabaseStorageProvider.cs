@@ -25,9 +25,10 @@ namespace RosPitukhNadzor
     {
         [Column("chat_id"), NotNull, DataType("INTEGER")]
         public long ChatID;
-        [Column("from_user_id"), NotNull, DataType("TEXT")]
+        [Column("word"), NotNull, DataType("TEXT")]
         public string Word;
     }
+
     internal class DatabaseStorageProvider : IStorageProvider
     {
         private ConfigurationDatabase config;
