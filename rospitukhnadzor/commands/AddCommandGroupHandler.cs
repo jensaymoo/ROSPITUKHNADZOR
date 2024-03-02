@@ -44,11 +44,15 @@ namespace RosPitukhNadzor.Commands
                     try
                     {
                         var baned_words = await AddBanWords(words, current_message.Chat.Id);
-                        await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} добавил в словарь: {string.Join(", ", baned_words)}");
+                        if (baned_words.Any())
+                            await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} добавил в словарь: {"«" + string.Join("», «", baned_words) + "»"}");
+                        else
+                            await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} попытался добавить в словарь: {"«" + string.Join("», «", words) + "»"}, но не добавил, пушто они уже и так есть в словаре");
+
                     }
                     catch 
                     {
-                        await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} попытался добавить в словарь: {string.Join(", ", words)}, но шото пошло нетак");
+                        await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} попытался добавить в словарь: {"«" + string.Join("», «", words) + "»"}, но шото пошло нетак");
                     }
                 }
                 else
