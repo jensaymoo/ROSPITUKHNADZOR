@@ -3,7 +3,7 @@ using Telegram.Bot.Types;
 
 namespace RosPitukhNadzor.Commands
 {
-    interface ICommandHandler
+    interface IMessageHandler
     {
         Task RunAsync(ITelegramBotClient bot, Update update);
     }

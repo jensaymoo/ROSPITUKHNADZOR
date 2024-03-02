@@ -4,8 +4,8 @@ using Telegram.Bot.Types.Enums;
 
 namespace RosPitukhNadzor.Commands
 {
-    [CommandHandler("/mute", ChatType.Group)]
-    class MuteCommandGroupHandler : ICommandHandler
+    [MessageHandler("/mute", [ChatType.Group])]
+    class MuteCommandGroupHandler : IMessageHandler
     {
         IStorageProvider storageProvider;
         IConfigurationProvider configProvider;

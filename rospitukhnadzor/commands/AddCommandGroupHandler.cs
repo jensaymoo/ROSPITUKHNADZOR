@@ -7,8 +7,8 @@ using Telegram.Bot.Types.Enums;
 
 namespace RosPitukhNadzor.Commands
 {
-    [CommandHandler("/add", ChatType.Group)]
-    class AddCommandGroupHandler : ICommandHandler
+    [MessageHandler("/add", ChatType.Group)]
+    class AddCommandGroupHandler : IMessageHandler
     {
         IStorageProvider storageProvider;
         IConfigurationProvider configProvider;
@@ -24,8 +24,6 @@ namespace RosPitukhNadzor.Commands
 
         public async Task RunAsync(ITelegramBotClient bot, Update update)
         {
-            Console.WriteLine("/add");
-
             var current_message = (update.Message ?? update.EditedMessage)!;
             var current_user = current_message.From!;
 
@@ -43,8 +41,15 @@ namespace RosPitukhNadzor.Commands
 
                 if (words.Any())
                 {
-                    var baned_words = await AddBanWords(words, current_message.Chat.Id);
-                    await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} добавил в словарь: {string.Join(", ", baned_words)}");
+                    try
+                    {
+                        var baned_words = await AddBanWords(words, current_message.Chat.Id);
+                        await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} добавил в словарь: {string.Join(", ", baned_words)}");
+                    }
+                    catch 
+                    {
+                        await bot.SendTextMessageAsync(current_message.Chat.Id, $"питух @{current_user.Username} попытался добавить в словарь: {string.Join(", ", words)}, но шото пошло нетак");
+                    }
                 }
                 else
                 {
@@ -59,12 +64,12 @@ namespace RosPitukhNadzor.Commands
 
         private async Task<IEnumerable<string>> AddBanWords(IEnumerable<string> words, long chat)
         {
-            var chat_hash_string = (chat).GetHashCode().ToBytesString();
-
             var baned_words = new List<string>();
+
             foreach (var word in words)
             {
                 var options = new RestClientOptions("https://ws3.morpher.ru/russian");
+
                 using (var client = new RestClient(options))
                 {
 
@@ -90,10 +95,9 @@ namespace RosPitukhNadzor.Commands
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     {
-#warning опасное место, почини его как прикрутишь логи
-                        continue;
+                        throw;
                     }
                 }
             }
@@ -111,7 +115,6 @@ namespace RosPitukhNadzor.Commands
             return added_ban_words;
         }
         static IEnumerable<string> EnumerateJsonPaths(JsonElement doc)
-
         {
             var queu = new Queue<(string ParentPath, JsonElement element)>();
             queu.Enqueue(("", doc));

@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using RosPitukhNadzor.Commands;
 using System.Reflection;
-using System.Windows.Input;
 
 namespace RosPitukhNadzor
 {
@@ -23,8 +22,8 @@ namespace RosPitukhNadzor
                 .InstancePerLifetimeScope();
 
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(t => t.GetCustomAttribute<CommandHandlerAttribute>() != null)
-                .As<ICommandHandler>()
+                .Where(t => t.GetCustomAttribute<MessageHandlerAttribute>() != null)
+                .As<IMessageHandler>()
                 .InstancePerLifetimeScope();
 
 

@@ -3,15 +3,15 @@
 namespace RosPitukhNadzor.Commands
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class CommandHandlerAttribute : Attribute
+    public class MessageHandlerAttribute : Attribute
     {
         public string? CommandName { get; private set; }
-        public ChatType ChatType { get; private set; }
+        public ChatType[] ChatTypes { get; private set; }
 
-        public CommandHandlerAttribute(string? commandName, ChatType chatType)
+        public MessageHandlerAttribute(string? commandName, params ChatType[] chatType)
         {
             CommandName = commandName;
-            ChatType = chatType;
+            ChatTypes = chatType;
         }
     }
 }
