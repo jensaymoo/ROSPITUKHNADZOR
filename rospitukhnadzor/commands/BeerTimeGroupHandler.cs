@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Serilog;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -11,7 +12,7 @@ namespace RosPitukhNadzor.Commands
         IConfigurationProvider configProvider;
 
         ConfigurationBot config;
-        public BeerTimeGroupHandler(IConfigurationProvider configuration, IStorageProvider storage)
+        public BeerTimeGroupHandler(ILogger logger, IConfigurationProvider configuration, IStorageProvider storage)
         {
             storageProvider = storage;
             configProvider = configuration;

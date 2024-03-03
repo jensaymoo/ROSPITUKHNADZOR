@@ -3,6 +3,8 @@ using AutoMapper.Extensions.ExpressionMapping;
 using AutoMapper.QueryableExtensions;
 using LinqToDB;
 using LinqToDB.Mapping;
+using Newtonsoft.Json.Linq;
+using Serilog;
 using System.Linq.Expressions;
 
 namespace RosPitukhNadzor
@@ -33,9 +35,11 @@ namespace RosPitukhNadzor
     {
         private ConfigurationDatabase config;
         private DataContext context;
+        private ILogger loggerProvider;
 
         private static readonly MapperConfiguration mapper_config;
         private static readonly IMapper mapper;
+
 
         static DatabaseStorageProvider()
         {
@@ -54,8 +58,10 @@ namespace RosPitukhNadzor
             });
             mapper = mapper_config.CreateMapper();
         }
-        public DatabaseStorageProvider(IConfigurationProvider configurationProvider)
+        public DatabaseStorageProvider(ILogger logger, IConfigurationProvider configurationProvider)
         {
+            loggerProvider = logger;
+
             config = configurationProvider.GetConfiguration(new ConfigurationDatabaseValidator());
             context = new DataContext(config.DatabaseProvider!, config.DatabaseConfig!);
 
@@ -65,10 +71,12 @@ namespace RosPitukhNadzor
 
         public async Task AddWarningAsync(Warning warning)
         {
+            loggerProvider.Information("Create {@Warning:l} on {TimeSatmp}", warning, DateTime.Now);
             await context.InsertAsync(mapper.Map<WarningTable>(warning));
         }
         public async Task<int> RemoveWarningAsync(Expression<Func<Warning, bool>> expression)
         {
+            loggerProvider.Information("Remove warnings, where {Expression} on {TimeSatmp}", expression.ToString(), DateTime.Now);
             return await context.GetTable<WarningTable>().
                 DeleteAsync(mapper.MapExpression<Expression<Func<WarningTable, bool>>>(expression));
         }
@@ -89,11 +97,13 @@ namespace RosPitukhNadzor
 
         public async Task AddBanWordAsync(BanWord word)
         {
+            loggerProvider.Information("Create {@BanWord:l} on {TimeSatmp}", word, DateTime.Now);
             await context.InsertAsync(mapper.Map<BanWordTable>(word));
         }
 
         public async Task<int> RemoveBanWordAsync(Expression<Func<BanWord, bool>> expression)
         {
+            loggerProvider.Information("Remove banwords, where {Expression:l} on {TimeSatmp}", expression.ToString(), DateTime.Now);
             return await context.GetTable<BanWordTable>().
                 DeleteAsync(mapper.MapExpression<Expression<Func<BanWordTable, bool>>>(expression));
         }

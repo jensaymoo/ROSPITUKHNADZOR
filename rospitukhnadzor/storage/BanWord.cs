@@ -8,7 +8,7 @@
             ChatID = chat;
             Word = word;
         }
-        public long ChatID;
-        public string Word;
+        public long ChatID { get; set; }
+        public string Word { get; set; }
     }
 }

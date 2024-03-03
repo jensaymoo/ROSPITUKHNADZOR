@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Serilog;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -7,7 +8,7 @@ namespace RosPitukhNadzor.Commands
     [MessageHandler("unknown", [ChatType.Group])]
     class UnknownCommandGroupHandler : IMessageHandler
     {
-        public UnknownCommandGroupHandler(IConfigurationProvider configurationProvider, IStorageProvider storageBase)
+        public UnknownCommandGroupHandler(ILogger logger, IConfigurationProvider configuration, IStorageProvider storage)
         {
 
         }

@@ -10,9 +10,9 @@
             ToUserID = toUser;
             WarningExpiried = time;
         }
-        public long ChatID;
-        public long FromUserID;
-        public long ToUserID;
-        public DateTime WarningExpiried;
+        public long ChatID { get; set; }
+        public long FromUserID { get; set; }
+        public long ToUserID { get; set; }
+        public DateTime WarningExpiried { get; set; }
     }
 }

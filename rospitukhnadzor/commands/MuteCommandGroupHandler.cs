@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Serilog;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -12,7 +13,7 @@ namespace RosPitukhNadzor.Commands
 
         ConfigurationBot config;
 
-        public MuteCommandGroupHandler(IConfigurationProvider configuration, IStorageProvider storage)
+        public MuteCommandGroupHandler(ILogger logger, IConfigurationProvider configuration, IStorageProvider storage)
         {
             storageProvider = storage;
             configProvider = configuration;
@@ -22,8 +23,6 @@ namespace RosPitukhNadzor.Commands
 
         public async Task RunAsync(ITelegramBotClient bot, Update update)
         {
-            Console.WriteLine("/mute");
-
             var current_message = (update.Message ?? update.EditedMessage)!;
             var current_user = current_message.From!;
 
@@ -35,19 +34,16 @@ namespace RosPitukhNadzor.Commands
             if (problem_message == null)
             {
                 await bot.SendTextMessageAsync(current_message.Chat.Id, $"ты ебобо штоле? кого пломбировать то?", replyToMessageId: current_message.MessageId);
-
                 return;
             }
             if (problem_user.Id == bot.BotId)
             {
                 await bot.SendTextMessageAsync(current_message.Chat.Id, $"анус себе запломбировать не хочешь?", replyToMessageId: current_message.MessageId);
-
                 return;
             }
             if (admins.Any(x => x.User.Id == problem_user.Id))
             {
                 await bot.SendTextMessageAsync(current_message.Chat.Id, $"он одмен, ты че", replyToMessageId: current_message.MessageId);
-
                 return;
             }
 

@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using RosPitukhNadzor.Commands;
+using Serilog;
 using System.Reflection;
+using AutofacSerilogIntegration;
 
 namespace RosPitukhNadzor
 {
@@ -9,28 +11,44 @@ namespace RosPitukhNadzor
         public static async Task Main()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<ConfigurationProviderJson>()
-                .As<IConfigurationProvider>()
-                .InstancePerLifetimeScope();
+            ILifetimeScope scope;
+            ITelegramBotInstance instance;
 
-            builder.RegisterType<DatabaseStorageProvider>()
-                .As<IStorageProvider>()
-                .InstancePerLifetimeScope();
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:dd-MM-yyyy HH:mm:ss} {Level}] {Message} ({SourceContext:l}) {NewLine}{Exception}{NewLine}")               
+                .CreateLogger();
 
-            builder.RegisterType<TelegramBot>()
-                .As<ITelegramBotInstance>()
-                .InstancePerLifetimeScope();
+            builder.RegisterLogger();
 
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
-                .Where(t => t.GetCustomAttribute<MessageHandlerAttribute>() != null)
-                .As<IMessageHandler>()
-                .InstancePerLifetimeScope();
-
-
-            using (var scope = builder.Build().BeginLifetimeScope())
+            try
             {
-                await scope.Resolve<ITelegramBotInstance>().Run();
+                builder.RegisterType<ConfigurationProviderJson>()
+                    .As<IConfigurationProvider>()
+                    .InstancePerLifetimeScope();
+
+                builder.RegisterType<DatabaseStorageProvider>()
+                    .As<IStorageProvider>()
+                    .InstancePerLifetimeScope();
+
+                builder.RegisterType<TelegramBot>()
+                    .As<ITelegramBotInstance>()
+                    .InstancePerLifetimeScope();
+
+                builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                    .Where(t => t.GetCustomAttribute<MessageHandlerAttribute>() != null)
+                    .As<IMessageHandler>()
+                    .InstancePerLifetimeScope();
+
+                scope = builder.Build().BeginLifetimeScope();
+                instance = scope.Resolve<ITelegramBotInstance>();
             }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Fatal error during initialization.");
+                return;
+            }
+
+            await instance.Run();
         }
     }
 }

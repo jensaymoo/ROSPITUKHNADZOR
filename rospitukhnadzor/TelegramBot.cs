@@ -5,6 +5,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Serilog;
 
 namespace RosPitukhNadzor
 {
@@ -12,14 +13,17 @@ namespace RosPitukhNadzor
     {
         public ConfigurationBot config;
 
+        ILogger loggerProvider;
         private IStorageProvider storage;
         private IEnumerable<IMessageHandler> handlers;
 
+
         private UpdateType[] allowedUpdates = new[] { UpdateType.Message, UpdateType.EditedMessage };
 
-        public TelegramBot(IConfigurationProvider configProvider, IStorageProvider storageBase, IEnumerable<IMessageHandler> messageHandlers) : 
+        public TelegramBot(ILogger logger, IConfigurationProvider configProvider, IStorageProvider storageBase, IEnumerable<IMessageHandler> messageHandlers) : 
             base(configProvider.GetConfiguration(new ConfigurationBotValidator())!.TelegramBotToken!)
         {
+            loggerProvider = logger;
             config = configProvider.GetConfiguration(new ConfigurationBotValidator());
             storage = storageBase;
             this.handlers = messageHandlers;
@@ -39,7 +43,6 @@ namespace RosPitukhNadzor
             PeriodicTimer timer = new(TimeSpan.FromMinutes(1));
             while (await timer.WaitForNextTickAsync())
             {
-
                 await storage.ClearExpiredWarningsAsync();
             }
         }
@@ -105,14 +108,17 @@ namespace RosPitukhNadzor
                 }
             }
         }
-        private static Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)
+        private Task ErrorHandler(ITelegramBotClient botClient, Exception error, CancellationToken cancellationToken)
         {
             var ErrorMessage = error switch
             {
                 ApiRequestException apiRequestException
                     => $"Telegram API Error:\n[{apiRequestException.ErrorCode}]\n{apiRequestException.Message}",
                 _ => error.ToString()
+
             };
+
+            loggerProvider.Fatal(error, "Fatal error in {Bot}" , nameof(TelegramBot));
             return Task.CompletedTask;
         }
 
