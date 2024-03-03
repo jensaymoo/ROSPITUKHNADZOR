@@ -25,33 +25,37 @@ namespace RosPitukhNadzor.Commands
             var current_user = current_message.From!;
 
             var current_message_text = (current_message!.Text ?? current_message!.Caption ?? string.Empty).ToLower();
+
+            //чекаем от кого сообщение (игнорим сообщения от админов)
             var admins = await bot.GetChatAdministratorsAsync(current_message.Chat.Id);
-
-            var founded_ban_words = await CheckMessageFromBanWords(current_message_text, current_message.Chat.Id);
-            if (founded_ban_words.Any() && !admins.Any(x => x.User.Id == current_user.Id))
+            if (!admins.Any(x => x.User.Id == current_user.Id))
             {
-                //чекаем на наличие банслов и от кого сообщение (игнорим сообщения от админов)
-                await bot.SendTextMessageAsync(current_message.Chat.Id, $"за свой гнилой базар ({"«" + string.Join("», «", founded_ban_words) + "»"}), " +
-                    $"питух @{current_user.Username} отхватил автобан на {config.AutoBanTimeSpan!.Value} мин");
-
-                var restrictions = new ChatPermissions()
+                //чекаем на наличие банслов 
+                var founded_ban_words = await CheckMessageFromBanWords(current_message_text, current_message.Chat.Id);
+                if (founded_ban_words.Any())
                 {
-                    CanSendVoiceNotes = false,
-                    CanSendVideos = false,
-                    CanSendVideoNotes = false,
-                    CanSendPolls = false,
-                    CanSendPhotos = false,
-                    CanSendOtherMessages = false,
-                    CanSendMessages = false,
-                    CanSendDocuments = false,
-                    CanAddWebPagePreviews = false,
-                    CanChangeInfo = false,
-                    CanManageTopics = false,
-                    CanPinMessages = false,
-                    CanSendAudios = false,
+                    await bot.SendTextMessageAsync(current_message.Chat.Id, $"за свой гнилой базар ({"«" + string.Join("», «", founded_ban_words) + "»"}), " +
+                        $"питух @{current_user.Username} отхватил автобан на {config.AutoBanTimeSpan!.Value} мин");
 
-                };
-                await bot.RestrictChatMemberAsync(current_message.Chat.Id, current_user.Id, restrictions, untilDate: DateTime.Now + TimeSpan.FromMinutes(config.AutoBanTimeSpan!.Value));
+                    var restrictions = new ChatPermissions()
+                    {
+                        CanSendVoiceNotes = false,
+                        CanSendVideos = false,
+                        CanSendVideoNotes = false,
+                        CanSendPolls = false,
+                        CanSendPhotos = false,
+                        CanSendOtherMessages = false,
+                        CanSendMessages = false,
+                        CanSendDocuments = false,
+                        CanAddWebPagePreviews = false,
+                        CanChangeInfo = false,
+                        CanManageTopics = false,
+                        CanPinMessages = false,
+                        CanSendAudios = false,
+
+                    };
+                    await bot.RestrictChatMemberAsync(current_message.Chat.Id, current_user.Id, restrictions, untilDate: DateTime.Now + TimeSpan.FromMinutes(config.AutoBanTimeSpan!.Value));
+                }
             }
         }
 
