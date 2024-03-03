@@ -24,37 +24,34 @@ namespace RosPitukhNadzor.Commands
             var current_message = (update.Message ?? update.EditedMessage)!;
             var current_user = current_message.From!;
 
-            var input_message = (current_message!.Text ?? current_message!.Caption ?? string.Empty).ToLower();
+            var current_message_text = (current_message!.Text ?? current_message!.Caption ?? string.Empty).ToLower();
             var admins = await bot.GetChatAdministratorsAsync(current_message.Chat.Id);
 
-            if (storageProvider.GetBanWords(f => f.ChatID == current_message.Chat.Id).Any() && current_message != null)
+            var founded_ban_words = await CheckMessageFromBanWords(current_message_text, current_message.Chat.Id);
+            if (founded_ban_words.Any() && !admins.Any(x => x.User.Id == current_user.Id))
             {
-                var founded_ban_words = await CheckMessageFromBanWords(input_message, current_message.Chat.Id);
-                if (founded_ban_words.Any() && !admins.Any(x => x.User.Id == current_user.Id))
+                //чекаем на наличие банслов и от кого сообщение (игнорим сообщения от админов)
+                await bot.SendTextMessageAsync(current_message.Chat.Id, $"за свой гнилой базар ({"«" + string.Join("», «", founded_ban_words) + "»"}), " +
+                    $"питух @{current_user.Username} отхватил автобан на {config.AutoBanTimeSpan!.Value} мин");
+
+                var restrictions = new ChatPermissions()
                 {
-                    await bot.SendTextMessageAsync(current_message.Chat.Id, $"за свой гнилой базар («{string.Join("», «", founded_ban_words)}»), " +
-                        $"питух @{current_user.Username} отхватил автобан на {config.AutoBanTimeSpan!.Value} мин");
+                    CanSendVoiceNotes = false,
+                    CanSendVideos = false,
+                    CanSendVideoNotes = false,
+                    CanSendPolls = false,
+                    CanSendPhotos = false,
+                    CanSendOtherMessages = false,
+                    CanSendMessages = false,
+                    CanSendDocuments = false,
+                    CanAddWebPagePreviews = false,
+                    CanChangeInfo = false,
+                    CanManageTopics = false,
+                    CanPinMessages = false,
+                    CanSendAudios = false,
 
-                    var restrictions = new ChatPermissions()
-                    {
-                        CanSendVoiceNotes = false,
-                        CanSendVideos = false,
-                        CanSendVideoNotes = false,
-                        CanSendPolls = false,
-                        CanSendPhotos = false,
-                        CanSendOtherMessages = false,
-                        CanSendMessages = false,
-                        CanSendDocuments = false,
-                        CanAddWebPagePreviews = false,
-                        CanChangeInfo = false,
-                        CanManageTopics = false,
-                        CanPinMessages = false,
-                        CanSendAudios = false,
-
-                    };
-                    await bot.RestrictChatMemberAsync(current_message.Chat.Id, current_user.Id, restrictions, untilDate: DateTime.Now + TimeSpan.FromMinutes(config.AutoBanTimeSpan!.Value));
-                    return;
-                }
+                };
+                await bot.RestrictChatMemberAsync(current_message.Chat.Id, current_user.Id, restrictions, untilDate: DateTime.Now + TimeSpan.FromMinutes(config.AutoBanTimeSpan!.Value));
             }
         }
 

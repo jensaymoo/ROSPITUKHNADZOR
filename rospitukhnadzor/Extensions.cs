@@ -16,7 +16,7 @@ namespace RosPitukhNadzor
             }
         }
 
-        public static IEnumerable<IMessageHandler> GetHandlers(this IEnumerable<IMessageHandler> handlers, Expression<Func<MessageHandlerAttribute, bool>> expression) =>
+        public static IEnumerable<IMessageHandler> SelectMessageHandlers(this IEnumerable<IMessageHandler> handlers, Expression<Func<MessageHandlerAttribute, bool>> expression) =>
             handlers.Where(x => x.GetType().GetCustomAttributes<MessageHandlerAttribute>().Where(expression.Compile()).Any());
 
     }

@@ -83,21 +83,21 @@ namespace RosPitukhNadzor
                     foreach (var comm in command_splited.Where(a => a.StartsWith('/')))
                     {
                         
-                        var command_handlers = handlers.GetHandlers(x => x.CommandName == comm && x.ChatTypes.Any(f => f.Equals(chat_type)));
+                        var command_handlers = handlers.SelectMessageHandlers(x => x.CommandName == comm && x.ChatTypes.Any(f => f.Equals(chat_type)));
                         if (command_handlers.Any())
                         {
                             command_handlers.ForEach(async x => await x.RunAsync(bot, update));
                         }
                         else
                         {
-                            command_handlers = handlers.GetHandlers(x => x.CommandName == "unknown" && x.ChatTypes.Any(f => f.Equals(chat_type)));
+                            command_handlers = handlers.SelectMessageHandlers(x => x.CommandName == "unknown" && x.ChatTypes.Any(f => f.Equals(chat_type)));
                             command_handlers.ForEach(async x => await x.RunAsync(bot, update));
                         }
                     }
                 }
                 else
                 {
-                    var message_handlers = handlers.GetHandlers(x => x.CommandName == null && x.ChatTypes.Any(f => f.Equals(chat_type)));
+                    var message_handlers = handlers.SelectMessageHandlers(x => x.CommandName == null && x.ChatTypes.Any(f => f.Equals(chat_type)));
                     if (message_handlers.Any())
                     {
                         message_handlers.ForEach(async x => await x.RunAsync(bot, update));
