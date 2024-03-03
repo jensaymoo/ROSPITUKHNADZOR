@@ -21,9 +21,9 @@ namespace RosPitukhNadzor.Commands
 
         public async Task RunAsync(ITelegramBotClient bot, Update update)
         {
-            var current_message = (update.Message ?? update.EditedMessage)!;
+            var current_message = update.Message;
             //немного ипмпровизация
-            if (current_message.Text != null)
+            if (current_message?.Text != null)
             {
                 switch (string.Concat(current_message.Text.Where(c => char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c)).ToArray()).ToLower())
                 {
